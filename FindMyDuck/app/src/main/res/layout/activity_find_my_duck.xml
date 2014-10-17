@@ -18,4 +18,17 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"></FrameLayout>
 
+    <ImageView
+        android:id="@+id/imgDuck"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_gravity="center_horizontal"
+        android:src="@drawable/images"/>
+    <Button
+        android:id="@+id/buttonVoice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Voice"/>
+
 </RelativeLayout>
