@@ -1,9 +1,12 @@
 package com.morgane_perron.findmyduck;
 
 import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
 
 
 public class FindMyDuck extends Activity {
@@ -12,6 +15,7 @@ public class FindMyDuck extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_find_my_duck);
+        changeMainContent(DuckVoice.newInstance());
     }
 
 
@@ -32,5 +36,14 @@ public class FindMyDuck extends Activity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void changeMainContent(Fragment fragment) {
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        // Replace whatever is in the fragment_container view with this fragment
+        transaction.replace(R.id.gameContent, fragment);
+
+        // Commit the transaction
+        transaction.commit();
     }
 }
