@@ -9,26 +9,42 @@
     tools:context=".FindMyDuck">
 
     <TextView
-        android:text="@string/hello_world"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-    <FrameLayout
-        android:id="@+id/gameContent"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"></FrameLayout>
-
-    <ImageView
-        android:id="@+id/imgDuck"
+        android:id="@+id/title"
+        android:text="@string/title"
+        android:layout_centerHorizontal="true"
+        android:textStyle="bold"
+        android:textSize="20dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:layout_gravity="center_horizontal"
-        android:src="@drawable/images"/>
+        android:layout_marginBottom="20dp"/>
     <Button
         android:id="@+id/buttonVoice"
+        android:layout_below="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
         android:text="Voice"/>
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@+id/buttonVoice"
+        android:id="@+id/lay"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:background="#ffffff">
+        <FrameLayout
+            android:id="@+id/gameContent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"></FrameLayout>
+
+        <ImageView
+            android:id="@+id/imgDuck"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/images"/>
+        </RelativeLayout>
 
 </RelativeLayout>
