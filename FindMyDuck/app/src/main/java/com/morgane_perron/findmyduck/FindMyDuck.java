@@ -6,13 +6,16 @@ import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.media.ToneGenerator;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import java.util.ArrayList;
@@ -25,6 +28,10 @@ public class FindMyDuck extends Activity implements View.OnClickListener {
     private int xPosition;
     private int yPosition;
     private Button speakButton;
+    private SoundView soundView;
+
+    private static final int VOLUME = 5;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +60,11 @@ public class FindMyDuck extends Activity implements View.OnClickListener {
             speakButton.setEnabled(false);
             speakButton.setText("Recognizer not present");
         }
+
+        soundView = (SoundView) findViewById(R.id.soundView);
+        //soundView.setOnClickListener(this);
+        soundView.setOnTouchListener(new MyTouchListener());
+
     }
 
 
@@ -99,6 +111,18 @@ public class FindMyDuck extends Activity implements View.OnClickListener {
             // on lance la reconnaissance
             // VOICE_RECOGNITION_REQUEST_CODE est un code à nous pour identifier la réponse
             startActivityForResult(intent, VOICE_RECOGNITION_REQUEST_CODE);
+        } else {
+            Log.e("on click", v.getX() + " " + v.getY());
+            float mousePositionX = soundView.getX();
+            float mousePositionY = soundView.getY();
+            double distance = Math.sqrt(Math.pow(mousePositionX - xPosition,2) + Math.pow(mousePositionY - yPosition,2));
+            //using any where`
+
+//int streamType, int volume
+            int volume = (int)(distance*VOLUME);
+            ToneGenerator toneG = new ToneGenerator(3,volume);
+            toneG.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 200); //200 is duration in ms
+
         }
     }
 
@@ -132,4 +156,22 @@ public class FindMyDuck extends Activity implements View.OnClickListener {
         }
 
     }
+
+    private final class MyTouchListener implements View.OnTouchListener {
+        public boolean onTouch(View view, MotionEvent motionEvent) {
+            if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                float mousePositionX = motionEvent.getX();
+                float mousePositionY = motionEvent.getY();
+                double distance = Math.sqrt(Math.pow(mousePositionX - xPosition,2) + Math.pow(mousePositionY - yPosition,2));
+                //using any where`
+                int volume = (int)(distance*distance*VOLUME);
+                Log.e("Volume", volume + "");
+                ToneGenerator toneG = new ToneGenerator(3,volume);
+                toneG.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 200); //200 is duration in ms
+                return true;
+            }
+            return false;
+        }
+    }
+
 }

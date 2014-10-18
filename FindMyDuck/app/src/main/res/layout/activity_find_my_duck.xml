@@ -17,6 +17,10 @@
         android:id="@+id/gameContent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"></FrameLayout>
+    <com.morgane_perron.findmyduck.SoundView
+        android:id="@+id/soundView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
     <ImageView
         android:id="@+id/imgDuck"
