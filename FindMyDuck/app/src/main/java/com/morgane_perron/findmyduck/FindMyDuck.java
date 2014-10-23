@@ -137,6 +137,9 @@ Log.e("dimension", width + " " + height);
         if (requestCode == VOICE_RECOGNITION_REQUEST_CODE && resultCode == RESULT_OK) {
             // on récupère les réponses
             ArrayList<String> matches = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+            for (int i=0; i<matches.size(); i++) {
+                Log.e("matches", matches.get(i));
+            }
             int nb_rep = matches.size();
             /*if (nb_rep > 0)
             {
