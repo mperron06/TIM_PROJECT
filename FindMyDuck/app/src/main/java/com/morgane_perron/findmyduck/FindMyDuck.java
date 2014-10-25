@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.media.MediaPlayer;
-import android.media.ToneGenerator;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.util.Log;
@@ -16,7 +15,6 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import java.util.ArrayList;
@@ -26,13 +24,17 @@ import java.util.List;
 public class FindMyDuck extends Activity implements View.OnClickListener {
     private static final int VOICE_RECOGNITION_REQUEST_CODE = 1234;
     private ImageView imgDuck;
-    private int xPosition;
-    private int yPosition;
+    //private int xPosition;
+    //private int yPosition;
+    private Point positionDuck;
     private Button speakButton;
+    private Button hautButton;
+    private Button basButton;
+    private Button droitButton;
+    private Button gaucheButton;
     private SoundView soundView;
     private int width;
     private int height;
-
 
     private MediaPlayer mPlayer = null;
 
@@ -46,15 +48,18 @@ public class FindMyDuck extends Activity implements View.OnClickListener {
         height = getWindowManager().getDefaultDisplay().getHeight();
 
         imgDuck = (ImageView) findViewById(R.id.imgDuck);
+        //imgDuck.setMinimumHeight(200000);
         //imgDuck.setVisibility(View.INVISIBLE);
         speakButton = (Button) findViewById(R.id.buttonVoice);
-        xPosition = (int) (Math.random() * (width-imgDuck.getWidth())); //Trouver les bons paramètres
-        yPosition = (int) (Math.random() * (height-imgDuck.getHeight()-speakButton.getHeight()));
-        Log.e("position", xPosition + " " + yPosition);
-        imgDuck.setX(xPosition);
-        imgDuck.setY(yPosition);
+        hautButton = (Button) findViewById(R.id.buttonHaut);
+        basButton = (Button) findViewById(R.id.buttonBas);
+        gaucheButton = (Button) findViewById(R.id.buttonGauche);
+        droitButton = (Button) findViewById(R.id.buttonDroit);
 
-
+        hautButton.setOnClickListener(this);
+        basButton.setOnClickListener(this);
+        gaucheButton.setOnClickListener(this);
+        droitButton.setOnClickListener(this);
 
         PackageManager pm = getPackageManager();
         List<ResolveInfo> activities = pm.queryIntentActivities(
@@ -71,7 +76,15 @@ public class FindMyDuck extends Activity implements View.OnClickListener {
         //soundView.setOnClickListener(this);
         soundView.setOnTouchListener(new MyTouchListener());
 
-Log.e("dimension", width + " " + height);
+        MyPolygon polygonWithDuck = soundView.getRandomPolygon();
+        positionDuck = polygonWithDuck.getOnePoint(0);
+        imgDuck.setScaleX((float)(soundView.getWRectangle()/(2*212)));
+        imgDuck.setScaleY((float)(soundView.getHRectangle()/(2.5*237)));
+        imgDuck.setX(positionDuck.x);//(positionDuck.x/width);
+        imgDuck.setY(positionDuck.y);//(positionDuck.y/height);
+Log.e("dimension", positionDuck.x + " " + positionDuck.y);
+        Log.e("dimension", positionDuck.x/width + " " + positionDuck.y/height);
+        Log.e("scale ", soundView.getWRectangle() + " " + imgDuck.getWidth());
     }
 
 
@@ -94,18 +107,19 @@ Log.e("dimension", width + " " + height);
         return super.onOptionsItemSelected(item);
     }
 
-    private void changeMainContent(Fragment fragment) {
+    /*private void changeMainContent(Fragment fragment) {
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         // Replace whatever is in the fragment_container view with this fragment
         transaction.replace(R.id.gameContent, fragment);
 
         // Commit the transaction
         transaction.commit();
-    }
+    }*/
 
 
     public void onClick(View v) {
         Log.e("onclick", ":P");
+        Point result = null;
         // si on a cliqué sur le bouton
         if (v.getId() == R.id.buttonVoice) {
             // création d’une nouvelle opération, opération de reconnaissance
@@ -118,12 +132,22 @@ Log.e("dimension", width + " " + height);
             // on lance la reconnaissance
             // VOICE_RECOGNITION_REQUEST_CODE est un code à nous pour identifier la réponse
             startActivityForResult(intent, VOICE_RECOGNITION_REQUEST_CODE);
-        } else {
+        } else if(v.getId() == R.id.buttonHaut){
+            result = soundView.moveSelection("haut");
+        }else if(v.getId() == R.id.buttonBas){
+            result = soundView.moveSelection("bas");
+        }else if(v.getId() == R.id.buttonDroit){
+            result = soundView.moveSelection("droite");
+        }else if(v.getId() == R.id.buttonGauche){
+            result = soundView.moveSelection("gauche");
+        }
+        else{
             Log.e("on click", v.getX() + " " + v.getY());
-            float mousePositionX = soundView.getX();
-            float mousePositionY = soundView.getY();
-            double distance = Math.sqrt(Math.pow(mousePositionX - xPosition, 2) + Math.pow(mousePositionY - yPosition, 2));
-            //using any where`
+        }
+        if (result !=null){
+            if(result.equals(positionDuck)) {
+                Log.e("WIN","WIN");
+            }
         }
     }
 
@@ -137,25 +161,19 @@ Log.e("dimension", width + " " + height);
         if (requestCode == VOICE_RECOGNITION_REQUEST_CODE && resultCode == RESULT_OK) {
             // on récupère les réponses
             ArrayList<String> matches = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-            for (int i=0; i<matches.size(); i++) {
-                Log.e("matches", matches.get(i));
-            }
-            int nb_rep = matches.size();
-            /*if (nb_rep > 0)
-            {
-                // par exemple ici, s’il y en a, on s’intéresse aux
-                // 3 premières réponses pour ne pas être trop éloigné
-                int nb_test = Math.min(3, nb_rep);
-                for(int i = 0; i < nb_test; i++)
-                {
-                    if (matches.get(0).toLowerCase().equals("zoomer"))
-                    {
-                        // code à exécuter quand on a dit « zoomer »
-                        break;
+            if(matches.size()>0) {
+                for (int i = 0; i < matches.size(); i++) {
+                    Log.e("matches", matches.get(i));
+                    Point currentPoint = soundView.moveSelection(matches.get(i).toLowerCase());
+                    if(currentPoint==positionDuck) {
+                        //WIN !!
+                        //Code qui montre le canard
+                        imgDuck.setVisibility(View.VISIBLE); //Non testé
+                        Log.e("WIN","WIN");
                     }
-                    // etc.
                 }
-            }*/
+            }
+
             //Code qui montre le canard
         }
 
@@ -185,7 +203,7 @@ Log.e("dimension", width + " " + height);
             if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
                 float mousePositionX = motionEvent.getX();
                 float mousePositionY = motionEvent.getY();
-                double distance = Math.sqrt(Math.pow(mousePositionX - xPosition, 2) + Math.pow(mousePositionY - yPosition, 2));
+                double distance = Math.sqrt(Math.pow(mousePositionX - positionDuck.x, 2) + Math.pow(mousePositionY - positionDuck.y, 2));
                 //using any where`
                 Log.e("positionTouch", mousePositionX + " " + mousePositionY);
                 float volume1 = (float)(1 - distance/1000);
