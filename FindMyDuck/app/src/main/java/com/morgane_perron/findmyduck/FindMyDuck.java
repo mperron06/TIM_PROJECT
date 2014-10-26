@@ -76,13 +76,18 @@ public class FindMyDuck extends Activity implements View.OnClickListener {
         //soundView.setOnClickListener(this);
         soundView.setOnTouchListener(new MyTouchListener());
 
-        MyPolygon polygonWithDuck = soundView.getRandomPolygon();
-        positionDuck = polygonWithDuck.getOnePoint(0);
+        positionDuck = soundView.getRandomPolygon();
+        positionDuck.x = (positionDuck.x*55)/soundView.getWRectangle();
+        positionDuck.y = (positionDuck.y*85)/soundView.getHRectangle();
+
         imgDuck.setScaleX((float)(soundView.getWRectangle()/(2*212)));
         imgDuck.setScaleY((float)(soundView.getHRectangle()/(2.5*237)));
         imgDuck.setX(positionDuck.x);//(positionDuck.x/width);
         imgDuck.setY(positionDuck.y);//(positionDuck.y/height);
-Log.e("dimension", positionDuck.x + " " + positionDuck.y);
+        //imgDuck.setX(200);//(positionDuck.x/width);
+        //imgDuck.setY(200);//(positionDuck.y/height);
+        //imgDuck.setX(positionDuck.x-(55+55/2));//(positionDuck.x/width);
+        //imgDuck.setY(positionDuck.y-(75));//(positionDuck.y/height); ---- rentre parfaitement PK???
         Log.e("dimension", positionDuck.x/width + " " + positionDuck.y/height);
         Log.e("scale ", soundView.getWRectangle() + " " + imgDuck.getWidth());
     }
@@ -118,7 +123,7 @@ Log.e("dimension", positionDuck.x + " " + positionDuck.y);
 
 
     public void onClick(View v) {
-        Log.e("onclick", ":P");
+        Log.e("position duck", positionDuck.x + " " + positionDuck.y);
         Point result = null;
         // si on a cliqué sur le bouton
         if (v.getId() == R.id.buttonVoice) {
@@ -145,8 +150,11 @@ Log.e("dimension", positionDuck.x + " " + positionDuck.y);
             Log.e("on click", v.getX() + " " + v.getY());
         }
         if (result !=null){
-            if(result.equals(positionDuck)) {
+            Log.e("on click", result.x + " " + result.y);
+            if((result.x == positionDuck.x) && (result.y == positionDuck.y)) {
                 Log.e("WIN","WIN");
+                Log.e("ici", "ici");
+                imgDuck.setVisibility(View.VISIBLE); //Non testé
             }
         }
     }
@@ -165,7 +173,7 @@ Log.e("dimension", positionDuck.x + " " + positionDuck.y);
                 for (int i = 0; i < matches.size(); i++) {
                     Log.e("matches", matches.get(i));
                     Point currentPoint = soundView.moveSelection(matches.get(i).toLowerCase());
-                    if(currentPoint==positionDuck) {
+                    if((currentPoint.x == positionDuck.x) && (currentPoint.y == positionDuck.y)) {
                         //WIN !!
                         //Code qui montre le canard
                         imgDuck.setVisibility(View.VISIBLE); //Non testé
@@ -212,6 +220,12 @@ Log.e("dimension", positionDuck.x + " " + positionDuck.y);
                 toneG.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 200); //200 is duration in ms*/
 
                 playSound(R.raw.bip, volume1);
+                if((mousePositionX== positionDuck.x) && (mousePositionY == positionDuck.y)) {
+                    Log.e("WIN","WIN");
+                    Log.e("ici", "ici");
+                    imgDuck.setVisibility(View.VISIBLE); //Non testé
+
+                }
                 return true;
             }
             return false;

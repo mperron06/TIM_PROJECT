@@ -137,10 +137,10 @@ public class SoundView extends View {
                 float dx = w * i;
                 float dy = h * j;
 
-                p.addPoint(dx, dy);
-                p.addPoint(dx, dy + h);
-                p.addPoint(dx + w, dy + h);
-                p.addPoint(dx + w, dy);
+                p.addPoint(dx, dy, i+j);
+                p.addPoint(dx, dy + h, i+j);
+                p.addPoint(dx + w, dy + h, i+j);
+                p.addPoint(dx + w, dy, i+j);
                 p.color = Color.BLACK;
                 // ou une autre couleur qui dépend de i et de j
                 elements.add(p);
@@ -182,11 +182,17 @@ public class SoundView extends View {
         }
     }
 
-    public MyPolygon getRandomPolygon() {
+    public Point getRandomPolygon() {
         int x = (int) (Math.random() * elements.size());
-        return elements.get(x);
+        Log.e("x",x+" "+elements.get(x).getPoints()[0].x+ " "+elements.get(x).getPoints()[0].y);
+        return elements.get(x).getPoints()[0];
     }
-
+    public int getRandomPolygonInt() {
+        int x = (int) (Math.random() * elements.size());
+        Log.e("x",x+"");
+        return x;
+    }
+    // public Point moveSelection(String direction) {
     public Point moveSelection(String direction) {
         if(direction.equals("gauche") && currentRectangle>=nb) {
             currentRectangle -= nb;
@@ -197,7 +203,7 @@ public class SoundView extends View {
         }else if (direction.equals("haut") && currentRectangle>=1) {
             currentRectangle -= 1;
         }
-        Log.e("currentRectangle", currentRectangle + "");
+        Log.e("currentRectangle", currentRectangle + " "+ elements.get(currentRectangle).getPoints()[0].x + " "+ elements.get(currentRectangle).getPoints()[0].y);
         invalidate();
         return elements.get(currentRectangle).getPoints()[0];
     }

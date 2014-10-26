@@ -1,6 +1,7 @@
 package com.morgane_perron.findmyduck;
 
 import android.graphics.Color;
+import android.util.Log;
 
 /**
  * Created by zz on 09/10/14.
@@ -24,7 +25,7 @@ public class MyPolygon {
 
     }
 
-    public void addPoint(float x, float y) {
+    public void addPoint(float x, float y, int num) {
         points[nb++] = new Point(x,y);
     }
     public Point[] getPoints() {
