@@ -64,13 +64,14 @@ public class FindMyDuck extends Activity implements View.OnClickListener {
         PackageManager pm = getPackageManager();
         List<ResolveInfo> activities = pm.queryIntentActivities(
                 new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH), 0);
+        /******************************************************************************* VOICE*/
         if (activities.size() != 0) {
             speakButton.setOnClickListener(this);
         } else {
 // pas de reconnaissance, on désactive le déclencheur
             speakButton.setEnabled(false);
             speakButton.setText("Recognizer not present");
-        }
+        } /**/
 
         soundView = (SoundView) findViewById(R.id.soundView);
         //soundView.setOnClickListener(this);
@@ -90,6 +91,7 @@ public class FindMyDuck extends Activity implements View.OnClickListener {
         //imgDuck.setY(positionDuck.y-(75));//(positionDuck.y/height); ---- rentre parfaitement PK???
         Log.e("dimension", positionDuck.x/width + " " + positionDuck.y/height);
         Log.e("scale ", soundView.getWRectangle() + " " + imgDuck.getWidth());
+        Log.e("largeur", soundView.getWRectangle() + " " + soundView.getHRectangle());
     }
 
 
@@ -124,6 +126,7 @@ public class FindMyDuck extends Activity implements View.OnClickListener {
 
     public void onClick(View v) {
         Log.e("position duck", positionDuck.x + " " + positionDuck.y);
+        Log.e("largeur", soundView.getHRectangle() + " " + soundView.getWRectangle());
         Point result = null;
         // si on a cliqué sur le bouton
         if (v.getId() == R.id.buttonVoice) {

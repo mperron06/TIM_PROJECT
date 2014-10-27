@@ -184,12 +184,10 @@ public class SoundView extends View {
 
     public Point getRandomPolygon() {
         int x = (int) (Math.random() * elements.size());
-        Log.e("x",x+" "+elements.get(x).getPoints()[0].x+ " "+elements.get(x).getPoints()[0].y);
         return elements.get(x).getPoints()[0];
     }
     public int getRandomPolygonInt() {
         int x = (int) (Math.random() * elements.size());
-        Log.e("x",x+"");
         return x;
     }
     // public Point moveSelection(String direction) {
