@@ -77,6 +77,9 @@ public class FindMyDuck extends Activity implements View.OnClickListener {
         //soundView.setOnClickListener(this);
         soundView.setOnTouchListener(new MyTouchListener());
 
+        positionDuck = new Point();
+
+        /*
         positionDuck = soundView.getRandomPolygon();
         positionDuck.x = (positionDuck.x*55)/soundView.getWRectangle();
         positionDuck.y = (positionDuck.y*85)/soundView.getHRectangle();
@@ -92,6 +95,7 @@ public class FindMyDuck extends Activity implements View.OnClickListener {
         Log.e("dimension", positionDuck.x/width + " " + positionDuck.y/height);
         Log.e("scale ", soundView.getWRectangle() + " " + imgDuck.getWidth());
         Log.e("largeur", soundView.getWRectangle() + " " + soundView.getHRectangle());
+        */
     }
 
 
@@ -126,7 +130,16 @@ public class FindMyDuck extends Activity implements View.OnClickListener {
 
     public void onClick(View v) {
         Log.e("position duck", positionDuck.x + " " + positionDuck.y);
-        Log.e("largeur", soundView.getHRectangle() + " " + soundView.getWRectangle());
+        if(positionDuck.x==-1 && positionDuck.y==-1) { // TESTE et OK !!!
+            Log.e("largeur", soundView.getHRectangle() + " " + soundView.getWRectangle());
+            positionDuck = soundView.getRandomPolygon();
+            imgDuck.setScaleX((float) (soundView.getWRectangle()/212));
+            imgDuck.setScaleY((float) (soundView.getHRectangle()/(237*1.1)));
+            imgDuck.setX(positionDuck.x-soundView.getWRectangle());//(positionDuck.x/width);
+            imgDuck.setY(positionDuck.y-(soundView.getHRectangle()*(float)0.85));//(positionDuck.y/height);
+            Log.e("position duck", positionDuck.x + " " + positionDuck.y);
+        }
+
         Point result = null;
         // si on a cliqué sur le bouton
         if (v.getId() == R.id.buttonVoice) {
@@ -157,7 +170,7 @@ public class FindMyDuck extends Activity implements View.OnClickListener {
             if((result.x == positionDuck.x) && (result.y == positionDuck.y)) {
                 Log.e("WIN","WIN");
                 Log.e("ici", "ici");
-                imgDuck.setVisibility(View.VISIBLE); //Non testé
+                imgDuck.setVisibility(View.VISIBLE);
             }
         }
     }
@@ -166,6 +179,16 @@ public class FindMyDuck extends Activity implements View.OnClickListener {
     protected void onActivityResult(int requestCode, int resultCode, Intent
             data) {
         Log.e("On ActivityResult", "On ActivityResult");
+        Log.e("position duck", positionDuck.x + " " + positionDuck.y);
+        if(positionDuck.x==-1 && positionDuck.y==-1) { // NON TESTE
+            Log.e("largeur", soundView.getHRectangle() + " " + soundView.getWRectangle());
+            positionDuck = soundView.getRandomPolygon();
+            imgDuck.setScaleX((float) (soundView.getWRectangle()/212));
+            imgDuck.setScaleY((float) (soundView.getHRectangle()/(237*1.1)));
+            imgDuck.setX(positionDuck.x-soundView.getWRectangle());//(positionDuck.x/width);
+            imgDuck.setY(positionDuck.y-(soundView.getHRectangle()*(float)0.85));//(positionDuck.y/height);
+            Log.e("position duck", positionDuck.x + " " + positionDuck.y);
+        }
         // on vérifie que la réponse est bonne et pour nous
         // RESULT_OK est une constante de la classe Activity
         // ce code extrait était placé dans une Activity
@@ -211,6 +234,16 @@ public class FindMyDuck extends Activity implements View.OnClickListener {
 
     private final class MyTouchListener implements View.OnTouchListener {
         public boolean onTouch(View view, MotionEvent motionEvent) {
+            Log.e("position duck", positionDuck.x + " " + positionDuck.y);
+            if(positionDuck.x==-1 && positionDuck.y==-1) { // NON TESTE
+                Log.e("largeur", soundView.getHRectangle() + " " + soundView.getWRectangle());
+                positionDuck = soundView.getRandomPolygon();
+                imgDuck.setScaleX((float) (soundView.getWRectangle()/212));
+                imgDuck.setScaleY((float) (soundView.getHRectangle()/(237*1.1)));
+                imgDuck.setX(positionDuck.x-soundView.getWRectangle());//(positionDuck.x/width);
+                imgDuck.setY(positionDuck.y-(soundView.getHRectangle()*(float)0.85));//(positionDuck.y/height);
+                Log.e("position duck", positionDuck.x + " " + positionDuck.y);
+            }
             if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
                 float mousePositionX = motionEvent.getX();
                 float mousePositionY = motionEvent.getY();
