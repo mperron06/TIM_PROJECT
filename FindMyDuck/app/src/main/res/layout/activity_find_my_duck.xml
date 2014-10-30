@@ -64,6 +64,11 @@
             android:layout_alignParentBottom="true"
             android:background="#ffffff">
 
+
+            <com.morgane_perron.findmyduck.SoundView
+                android:id="@+id/soundView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
             <ImageView
                 android:id="@+id/imgDuck"
                 android:layout_width="wrap_content"
@@ -72,10 +77,6 @@
                 android:visibility="invisible"
                 android:layout_gravity="center_horizontal"
                 android:src="@drawable/images"/>
-            <com.morgane_perron.findmyduck.SoundView
-                android:id="@+id/soundView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
 
         </RelativeLayout>
     </LinearLayout>

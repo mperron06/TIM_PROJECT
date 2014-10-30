@@ -22,6 +22,7 @@ public class SoundView extends View {
     private ArrayList<MyPolygon> elements;
     private ArrayList<MyPolygon> newElements;
     private int []originalSize = new int[2];
+    private ArrayList<Integer> listeCarreVisite;
     private int nb = 10;
     private Paint paint;
     private float w;
@@ -36,11 +37,13 @@ public class SoundView extends View {
         super(context, attrs);
         this.setOnTouchListener(new MyTouchListener());
         this.paint = new Paint();
+        this.listeCarreVisite = new ArrayList<Integer>();
         originalSize[0] = 1000;
         originalSize[1] = 2000;
         generatePolygons();
 
         currentRectangle = 0;
+        this.listeCarreVisite.add(currentRectangle);
     }
 
 
@@ -60,11 +63,21 @@ public class SoundView extends View {
             g.drawLine(pts[pts.length - 1].x, pts[pts.length - 1].y, pts[0].x, pts[0].y, paint);
 
         }
+        paintAllRectangleVisited(g);
         paint.setColor(Color.BLACK);
         //g.drawRect(50,50,100,100,paint);
-        //
         //g.drawRect(elements.get(0).getOnePoint(0).x, elements.get(0).getOnePoint(0).y, elements.get(0).getOnePoint(2).x, elements.get(0).getOnePoint(2).y, paint );
         g.drawRect(elements.get(currentRectangle).getOnePoint(0).x, elements.get(currentRectangle).getOnePoint(0).y, elements.get(currentRectangle).getOnePoint(2).x, elements.get(currentRectangle).getOnePoint(2).y, paint);
+        this.listeCarreVisite.add(currentRectangle);
+
+    }
+
+    private void paintAllRectangleVisited(Canvas g) {
+        paint.setColor(Color.BLACK);
+        for (int i=0; i<listeCarreVisite.size(); i++) {
+            int toDraw = this.listeCarreVisite.get(i);
+            g.drawRect(elements.get(toDraw).getOnePoint(0).x, elements.get(toDraw).getOnePoint(0).y, elements.get(toDraw).getOnePoint(2).x, elements.get(toDraw).getOnePoint(2).y, paint);
+        }
     }
 
     @Override

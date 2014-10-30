@@ -64,14 +64,14 @@ public class FindMyDuck extends Activity implements View.OnClickListener {
         PackageManager pm = getPackageManager();
         List<ResolveInfo> activities = pm.queryIntentActivities(
                 new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH), 0);
-        /******************************************************************************* VOICE*/
+        /******************************************************************************* VOICE
         if (activities.size() != 0) {
             speakButton.setOnClickListener(this);
         } else {
 // pas de reconnaissance, on désactive le déclencheur
             speakButton.setEnabled(false);
             speakButton.setText("Recognizer not present");
-        } /**/
+        } */
 
         soundView = (SoundView) findViewById(R.id.soundView);
         //soundView.setOnClickListener(this);
@@ -207,8 +207,6 @@ public class FindMyDuck extends Activity implements View.OnClickListener {
                     }
                 }
             }
-
-            //Code qui montre le canard
         }
 
     }
