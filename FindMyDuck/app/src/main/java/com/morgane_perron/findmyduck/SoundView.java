@@ -40,7 +40,7 @@ public class SoundView extends View {
         this.listeCarreVisite = new ArrayList<Integer>();
         originalSize[0] = 1000;
         originalSize[1] = 2000;
-        generatePolygons();
+        //generatePolygons();
 
         currentRectangle = 0;
         this.listeCarreVisite.add(currentRectangle);
@@ -159,6 +159,7 @@ public class SoundView extends View {
                 elements.add(p);
             }
         }
+        invalidate();
     }
 
     public int getCentreX() {
@@ -225,5 +226,14 @@ public class SoundView extends View {
 
     public float getHRectangle() {
         return h;
+    }
+
+    public void setNb(int nb) {
+        this.nb = nb;
+    }
+
+    public void clear(){
+        this.listeCarreVisite.clear();
+        this.currentRectangle = 0;
     }
 }

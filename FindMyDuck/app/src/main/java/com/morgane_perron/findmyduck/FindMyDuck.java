@@ -1,13 +1,16 @@
 package com.morgane_perron.findmyduck;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Environment;
 import android.speech.RecognizerIntent;
 import android.util.Log;
 import android.view.Menu;
@@ -16,7 +19,14 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.SeekBar;
+import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,19 +45,73 @@ public class FindMyDuck extends Activity implements View.OnClickListener {
     private SoundView soundView;
     private int width;
     private int height;
-
+    private Button goButton;
     private MediaPlayer mPlayer = null;
+    private int nbCarre;
+    private long startTime;
+    private Dialog dialog;
+    private File mFile;
+    private String data;
 
+    private ArrayList<DataGamer>dataCollected;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_find_my_duck);
+
+        Log.i(":P", Environment.getExternalStorageDirectory().getPath() + "/Android/data/dataCollected.txt");
+        mFile = new File(Environment.getExternalStorageDirectory().getPath() + "/Android/data/dataCollected.txt");
+        dataCollected = new ArrayList<DataGamer>();
+        data = "";
+
+        nbCarre = 5;
+        dialog = new Dialog(this);
+        dialog.setContentView(R.layout.begin_dialog);
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setTitle("Nb Carrés : " + nbCarre);
+
+        goButton = (Button) dialog.findViewById(R.id.goButton);
+        goButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                initiateGame();
+                dialog.dismiss();
+                startTime = System.currentTimeMillis();;
+            }
+        });
+
+        final SeekBar sk = (SeekBar) dialog.findViewById(R.id.seekBarNbCarre);
+        sk.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                // TODO Auto-generated method stub
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                // TODO Auto-generated method stub
+            }
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                // TODO Auto-generated method stub
+                nbCarre = progress+2;
+                dialog.setTitle("Nb Carrés : " + String.valueOf(progress+2));
+            }
+        });
+        dialog.show();
+
+    }
+
+    private void initiateGame(){
         //changeMainContent(DuckVoice.newInstance());
         width = getWindowManager().getDefaultDisplay().getWidth();
         height = getWindowManager().getDefaultDisplay().getHeight();
 
         imgDuck = (ImageView) findViewById(R.id.imgDuck);
+        imgDuck.setVisibility(View.INVISIBLE);
         //imgDuck.setMinimumHeight(200000);
         //imgDuck.setVisibility(View.INVISIBLE);
         speakButton = (Button) findViewById(R.id.buttonVoice);
@@ -65,16 +129,19 @@ public class FindMyDuck extends Activity implements View.OnClickListener {
         List<ResolveInfo> activities = pm.queryIntentActivities(
                 new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH), 0);
         /******************************************************************************* VOICE
-        if (activities.size() != 0) {
-            speakButton.setOnClickListener(this);
-        } else {
-// pas de reconnaissance, on désactive le déclencheur
-            speakButton.setEnabled(false);
-            speakButton.setText("Recognizer not present");
-        } */
+         if (activities.size() != 0) {
+         speakButton.setOnClickListener(this);
+         } else {
+         // pas de reconnaissance, on désactive le déclencheur
+         speakButton.setEnabled(false);
+         speakButton.setText("Recognizer not present");
+         } */
 
         soundView = (SoundView) findViewById(R.id.soundView);
         //soundView.setOnClickListener(this);
+        soundView.clear();
+        soundView.setNb(nbCarre);
+        soundView.generatePolygons();
         soundView.setOnTouchListener(new MyTouchListener());
 
         positionDuck = new Point();
@@ -97,7 +164,6 @@ public class FindMyDuck extends Activity implements View.OnClickListener {
         Log.e("largeur", soundView.getWRectangle() + " " + soundView.getHRectangle());
         */
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -165,12 +231,11 @@ public class FindMyDuck extends Activity implements View.OnClickListener {
         else{
             Log.e("on click", v.getX() + " " + v.getY());
         }
+
         if (result !=null){
             Log.e("on click", result.x + " " + result.y);
             if((result.x == positionDuck.x) && (result.y == positionDuck.y)) {
-                Log.e("WIN","WIN");
-                Log.e("ici", "ici");
-                imgDuck.setVisibility(View.VISIBLE);
+                onWin("Bouton");
             }
         }
     }
@@ -202,8 +267,7 @@ public class FindMyDuck extends Activity implements View.OnClickListener {
                     if((currentPoint.x == positionDuck.x) && (currentPoint.y == positionDuck.y)) {
                         //WIN !!
                         //Code qui montre le canard
-                        imgDuck.setVisibility(View.VISIBLE); //Non testé
-                        Log.e("WIN","WIN");
+                        onWin("Voice");
                     }
                 }
             }
@@ -255,14 +319,47 @@ public class FindMyDuck extends Activity implements View.OnClickListener {
 
                 playSound(R.raw.bip, volume1);
                 if((mousePositionX== positionDuck.x) && (mousePositionY == positionDuck.y)) {
-                    Log.e("WIN","WIN");
-                    Log.e("ici", "ici");
-                    imgDuck.setVisibility(View.VISIBLE); //Non testé
-
+                     //Non testé
+                    onWin("Sound");
                 }
                 return true;
             }
             return false;
+        }
+    }
+
+    private void onWin(String interaction) {
+        long time = (System.currentTimeMillis() - startTime)/1000;
+        Log.e("WIN", time + " second");
+        data+=new DataGamer(interaction, time, nbCarre).toString();
+        writeSettings(data);
+        dataCollected.add(new DataGamer(interaction, time, nbCarre));
+        imgDuck.setVisibility(View.VISIBLE);
+        dialog.setTitle("You win in : " + time + " seconds, try again :");
+        dialog.show();
+    }
+
+    public void writeSettings(String data){
+        try {
+
+            // Si le fichier est lisible et qu'on peut écrire dedans
+            if(Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())
+                    && !Environment.MEDIA_MOUNTED_READ_ONLY.equals(Environment.getExternalStorageState())) {
+                // On crée un nouveau fichier. Si le fichier existe déjà, il ne sera pas créé
+                if(!mFile.exists())
+                    mFile.createNewFile();
+                FileOutputStream output = new FileOutputStream(mFile);
+                output.write(data.getBytes());
+                if(output != null)
+                    output.close();
+            }
+           else{
+                Log.e("NOP", "PROBLEME");
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
