@@ -65,8 +65,6 @@ public class SoundView extends View {
         }
         paintAllRectangleVisited(g);
         paint.setColor(Color.BLACK);
-        //g.drawRect(50,50,100,100,paint);
-        //g.drawRect(elements.get(0).getOnePoint(0).x, elements.get(0).getOnePoint(0).y, elements.get(0).getOnePoint(2).x, elements.get(0).getOnePoint(2).y, paint );
         g.drawRect(elements.get(currentRectangle).getOnePoint(0).x, elements.get(currentRectangle).getOnePoint(0).y, elements.get(currentRectangle).getOnePoint(2).x, elements.get(currentRectangle).getOnePoint(2).y, paint);
         this.listeCarreVisite.add(currentRectangle);
 
@@ -235,5 +233,19 @@ public class SoundView extends View {
     public void clear(){
         this.listeCarreVisite.clear();
         this.currentRectangle = 0;
+    }
+
+    public Point caseContainsPoint(Point p){
+        for(int i=0; i<elements.size(); i++) {
+            if(p.x >= elements.get(i).getPoints()[0].x && p.x <= elements.get(i).getPoints()[2].x){
+                Log.e("dans x", "dans x");
+                if(p.y >= elements.get(i).getPoints()[0].y && p.y <= elements.get(i).getPoints()[2].y){
+                    this.listeCarreVisite.add(i);
+                    Log.e("dans y", "dans y");
+                    return elements.get(i).getPoints()[0];
+                }
+            }
+        }
+        return null;
     }
 }

@@ -311,14 +311,12 @@ public class FindMyDuck extends Activity implements View.OnClickListener {
                 float mousePositionY = motionEvent.getY();
                 double distance = Math.sqrt(Math.pow(mousePositionX - positionDuck.x, 2) + Math.pow(mousePositionY - positionDuck.y, 2));
                 //using any where`
-                Log.e("positionTouch", mousePositionX + " " + mousePositionY);
+                Point currentTouch = soundView.caseContainsPoint(new Point(mousePositionX, mousePositionY));
+                Log.e("current touch", currentTouch.x+ " " + currentTouch.y);
                 float volume1 = (float)(1 - distance/1000);
                 Log.e("Volume", distance + " " + volume1);
-                /*ToneGenerator toneG = new ToneGenerator(3,volume);
-                toneG.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 200); //200 is duration in ms*/
-
                 playSound(R.raw.bip, volume1);
-                if((mousePositionX== positionDuck.x) && (mousePositionY == positionDuck.y)) {
+                if((currentTouch.x == positionDuck.x) && (currentTouch.y == positionDuck.y)) {
                      //Non testé
                     onWin("Sound");
                 }
