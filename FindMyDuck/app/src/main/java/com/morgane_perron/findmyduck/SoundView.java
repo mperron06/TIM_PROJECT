@@ -160,13 +160,6 @@ public class SoundView extends View {
         invalidate();
     }
 
-    public int getCentreX() {
-        return (int) x;
-    }
-    public int getCentreY() {
-        return (int) y;
-    }
-
     private final class MyTouchListener implements View.OnTouchListener {
         public boolean onTouch(View view, MotionEvent motionEvent) {
             if(motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
@@ -187,20 +180,13 @@ public class SoundView extends View {
         }
     }
 
-    public void setXY(float x, float y) {
-        if (x>0 && x<originalSize[0] && y>0 && y<originalSize[1]) {
-            generatePolygons();
-            deform(x, y);
-        }
-    }
-
     public Point getRandomPolygon() {
         int x = (int) (Math.random() * elements.size());
+        if(elements.get(x).getPoints()[0].x == 0 && elements.get(x).getPoints()[0].y == 0){
+            // the duck can't be in the initial case (0,0)
+            return getRandomPolygon();
+        }
         return elements.get(x).getPoints()[0];
-    }
-    public int getRandomPolygonInt() {
-        int x = (int) (Math.random() * elements.size());
-        return x;
     }
     // public Point moveSelection(String direction) {
     public Point moveSelection(String direction) {
