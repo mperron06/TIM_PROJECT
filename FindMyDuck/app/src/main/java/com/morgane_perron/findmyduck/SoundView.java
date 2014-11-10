@@ -110,9 +110,13 @@ public class SoundView extends View {
 
     public Point getRandomPolygon() {
         int x = (int) (Math.random() * elements.size());
+        if(elements.get(x).getPoints()[0].x == 0 && elements.get(x).getPoints()[0].y == 0){
+            // the duck can't be in the initial case (0,0)
+            return getRandomPolygon();
+        }
         return elements.get(x).getPoints()[0];
     }
-
+    
     public Point moveSelection(String direction) {
         if(direction.equals("gauche") && currentRectangle>=nb) {
             currentRectangle -= nb;

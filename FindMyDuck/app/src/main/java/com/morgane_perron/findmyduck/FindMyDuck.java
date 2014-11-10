@@ -45,8 +45,15 @@ public class FindMyDuck extends Activity implements View.OnClickListener {
     private Dialog dialog;
     private File mFile;
 
+    private String data;
+    private float varSetX, varSetY;
+
+    private ArrayList<DataGamer>dataCollected;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        varSetX=1;
+        varSetY=1;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_find_my_duck);
 
@@ -134,24 +141,6 @@ public class FindMyDuck extends Activity implements View.OnClickListener {
         soundView.setOnTouchListener(new MyTouchListener());
 
         positionDuck = new Point();
-
-        /*
-        positionDuck = soundView.getRandomPolygon();
-        positionDuck.x = (positionDuck.x*55)/soundView.getWRectangle();
-        positionDuck.y = (positionDuck.y*85)/soundView.getHRectangle();
-
-        imgDuck.setScaleX((float)(soundView.getWRectangle()/(2*212)));
-        imgDuck.setScaleY((float)(soundView.getHRectangle()/(2.5*237)));
-        imgDuck.setX(positionDuck.x);//(positionDuck.x/width);
-        imgDuck.setY(positionDuck.y);//(positionDuck.y/height);
-        //imgDuck.setX(200);//(positionDuck.x/width);
-        //imgDuck.setY(200);//(positionDuck.y/height);
-        //imgDuck.setX(positionDuck.x-(55+55/2));//(positionDuck.x/width);
-        //imgDuck.setY(positionDuck.y-(75));//(positionDuck.y/height); ---- rentre parfaitement PK???
-        Log.e("dimension", positionDuck.x/width + " " + positionDuck.y/height);
-        Log.e("scale ", soundView.getWRectangle() + " " + imgDuck.getWidth());
-        Log.e("largeur", soundView.getWRectangle() + " " + soundView.getHRectangle());
-        */
     }
 
     @Override
@@ -185,14 +174,13 @@ public class FindMyDuck extends Activity implements View.OnClickListener {
 
     public void onClick(View v) {
         Log.e("position duck", positionDuck.x + " " + positionDuck.y);
-        if(positionDuck.x==-1 && positionDuck.y==-1) { // TESTE et OK !!!
-            Log.e("largeur", soundView.getHRectangle() + " " + soundView.getWRectangle());
+        if(positionDuck.x==-1 && positionDuck.y==-1) {
             positionDuck = soundView.getRandomPolygon();
             imgDuck.setScaleX((float) (soundView.getWRectangle()/212));
             imgDuck.setScaleY((float) (soundView.getHRectangle()/(237*1.1)));
-            imgDuck.setX(positionDuck.x-soundView.getWRectangle());//(positionDuck.x/width);
-            imgDuck.setY(positionDuck.y-(soundView.getHRectangle()*(float)0.85));//(positionDuck.y/height);
-            Log.e("position duck", positionDuck.x + " " + positionDuck.y);
+            getScaleXY();;
+            imgDuck.setX(positionDuck.x-soundView.getWRectangle()*varSetX);//(positionDuck.x/width);
+            imgDuck.setY(positionDuck.y-soundView.getHRectangle()*varSetY);//(positionDuck.y/height);
         }
 
         Point result = null;
@@ -234,14 +222,13 @@ public class FindMyDuck extends Activity implements View.OnClickListener {
             data) {
         Log.e("On ActivityResult", "On ActivityResult");
         Log.e("position duck", positionDuck.x + " " + positionDuck.y);
-        if(positionDuck.x==-1 && positionDuck.y==-1) { // NON TESTE
-            Log.e("largeur", soundView.getHRectangle() + " " + soundView.getWRectangle());
+        if(positionDuck.x==-1 && positionDuck.y==-1) {
             positionDuck = soundView.getRandomPolygon();
             imgDuck.setScaleX((float) (soundView.getWRectangle()/212));
             imgDuck.setScaleY((float) (soundView.getHRectangle()/(237*1.1)));
-            imgDuck.setX(positionDuck.x-soundView.getWRectangle());//(positionDuck.x/width);
-            imgDuck.setY(positionDuck.y-(soundView.getHRectangle()*(float)0.85));//(positionDuck.y/height);
-            Log.e("position duck", positionDuck.x + " " + positionDuck.y);
+            getScaleXY();;
+            imgDuck.setX(positionDuck.x-soundView.getWRectangle()*varSetX);//(positionDuck.x/width);
+            imgDuck.setY(positionDuck.y-soundView.getHRectangle()*varSetY);//(positionDuck.y/height);
         }
         // on vérifie que la réponse est bonne et pour nous
         // RESULT_OK est une constante de la classe Activity
@@ -286,14 +273,13 @@ public class FindMyDuck extends Activity implements View.OnClickListener {
     private final class MyTouchListener implements View.OnTouchListener {
         public boolean onTouch(View view, MotionEvent motionEvent) {
             Log.e("position duck", positionDuck.x + " " + positionDuck.y);
-            if(positionDuck.x==-1 && positionDuck.y==-1) { // NON TESTE
-                Log.e("largeur", soundView.getHRectangle() + " " + soundView.getWRectangle());
+            if(positionDuck.x==-1 && positionDuck.y==-1) {
                 positionDuck = soundView.getRandomPolygon();
                 imgDuck.setScaleX((float) (soundView.getWRectangle()/212));
                 imgDuck.setScaleY((float) (soundView.getHRectangle()/(237*1.1)));
-                imgDuck.setX(positionDuck.x-soundView.getWRectangle());//(positionDuck.x/width);
-                imgDuck.setY(positionDuck.y-(soundView.getHRectangle()*(float)0.85));//(positionDuck.y/height);
-                Log.e("position duck", positionDuck.x + " " + positionDuck.y);
+                getScaleXY();;
+                imgDuck.setX(positionDuck.x-soundView.getWRectangle()*varSetX);//(positionDuck.x/width);
+                imgDuck.setY(positionDuck.y-soundView.getHRectangle()*varSetY);//(positionDuck.y/height);
             }
             if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
                 float mousePositionX = motionEvent.getX();
@@ -321,7 +307,7 @@ public class FindMyDuck extends Activity implements View.OnClickListener {
         dialog.setTitle("You win in : " + t + " seconds, try again :");
         dialog.show();
     }
-
+    /* resoudre le positionnement du canard */
     public void writeSettings(String data){
         try {
 
@@ -343,6 +329,51 @@ public class FindMyDuck extends Activity implements View.OnClickListener {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+    public void getScaleXY(){
+
+        switch (nbCarre){
+            case 2 :
+                varSetX= (float) -0.20;
+                varSetY= (float) -0.25;
+                break;
+            case 3 :
+                varSetX= (float) -0.07;
+                varSetY= (float) -0.1;
+                break;
+            case 4 :
+                varSetX= (float) 0.12;
+                varSetY= (float) 0.05;
+                break;
+            case 5 :
+                varSetX= (float) 0.30;
+                varSetY= (float) 0.17;
+                break;
+            case 6 :
+                varSetX= (float) 0.45;
+                varSetY= (float) 0.30;
+                break;
+            case 7 :
+                varSetX= (float) 0.58;
+                varSetY= (float) 0.43;
+                break;
+            case 8 :
+                varSetX= (float) 0.72;
+                varSetY= (float) 0.60;
+                break;
+            case 9 :
+                varSetX= (float) 0.90;
+                varSetY= (float) 0.75;
+                break;
+            case 10 :
+                varSetX=1;
+                varSetY= (float) 0.85 ;
+                break;
+            default:
+                varSetX=1;
+                varSetY= (float) 0.85;
+
         }
     }
 
