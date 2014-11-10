@@ -229,10 +229,13 @@ public class FindMyDuck extends Activity implements View.OnClickListener {
             if(matches.size()>0) {
                 for (int i = 0; i < matches.size(); i++) {
                     Point currentPoint = soundView.moveSelection(matches.get(i).toLowerCase());
-                    if((currentPoint.x == positionDuck.x) && (currentPoint.y == positionDuck.y)) {
+
+                    if(currentPoint != null && (currentPoint.x == positionDuck.x) && (currentPoint.y == positionDuck.y)) {
                         //WIN, Code qui montre le canard
                         onWin("Voice");
                     }
+                    if(currentPoint!=null)
+                        break;
                 }
             }
         }

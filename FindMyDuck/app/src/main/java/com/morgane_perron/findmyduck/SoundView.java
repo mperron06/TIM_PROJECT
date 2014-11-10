@@ -128,17 +128,25 @@ public class SoundView extends View {
      * @return Point
      */
     public Point moveSelection(String direction) {
+        boolean ok = false;
         if(direction.equals("gauche") && currentRectangle>=nb) {
             currentRectangle -= nb;
+            ok = true;
         } else if (direction.equals("droite") && currentRectangle<=elements.size()-nb-1) {
+            ok = true;
             currentRectangle += nb;
         }else if (direction.equals("bas") && currentRectangle<=elements.size()-2) {
+            ok = true;
             currentRectangle += 1;
-        }else if ((direction.equals("haut") || direction.equals("Oh") || direction.equals("o")) && currentRectangle>=1) {
+        }else if ((direction.equals("haut") || direction.equals("Oh") || direction.equals("o") || direction.equals("eau") || direction.equals("lol")) && currentRectangle>=1) {
+            ok = true;
             currentRectangle -= 1;
         }
-        invalidate();
-        return elements.get(currentRectangle).getPoints()[0];
+        if(ok) {
+            invalidate();
+            return elements.get(currentRectangle).getPoints()[0];
+        }
+        return null;
     }
 
     /**
