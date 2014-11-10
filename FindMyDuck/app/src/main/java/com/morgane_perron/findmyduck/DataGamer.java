@@ -5,10 +5,10 @@ package com.morgane_perron.findmyduck;
  */
 public class DataGamer {
     private String interactionType;
-    private long time;
+    private float time;
     private int nbCarre;
 
-    public DataGamer(String interactionType, long time, int nbCarre) {
+    public DataGamer(String interactionType, float time, int nbCarre) {
         this.interactionType = interactionType;
         this.time = time;
         this.nbCarre = nbCarre;

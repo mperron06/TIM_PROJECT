@@ -4,14 +4,9 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
 
 import java.util.ArrayList;
 
@@ -20,7 +15,6 @@ import java.util.ArrayList;
  */
 public class SoundView extends View {
     private ArrayList<MyPolygon> elements;
-    private ArrayList<MyPolygon> newElements;
     private int []originalSize = new int[2];
     private ArrayList<Integer> listeCarreVisite;
     private int nb = 10;
@@ -28,14 +22,10 @@ public class SoundView extends View {
     private float w;
     private float h;
 
-    private float x;
-    private float y;
-
     private int currentRectangle;
 
     public SoundView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        this.setOnTouchListener(new MyTouchListener());
         this.paint = new Paint();
         this.listeCarreVisite = new ArrayList<Integer>();
         originalSize[0] = 1000;
@@ -91,49 +81,6 @@ public class SoundView extends View {
 
     }
 
-    private void deform(float x, float y) {
-        this.x = x;
-        this.y = y;
-        //Pour chaque polygone
-        generatePolygons();
-        for(int i=0; i<elements.size(); i++) {
-            Point []points = elements.get(i).getPoints();
-            //Pour chaque points de polygone
-            for (int j=0; j<points.length; j++) {
-                //Calcul de la distance
-                double dist = Math.sqrt(Math.pow(x-points[j].x,2) + Math.pow(y-points[j].y,2));
-                double scale = scale(dist);
-                double xp = x + (points[j].x - x) * scale;
-                double yp = y + (points[j].y - y) * scale;
-                Point p = new Point((float)xp,(float)yp);
-                elements.get(i).setPoints(p,j);
-            }
-        }
-        invalidate();
-    }
-
-    private double fDeform(double x) {
-        float r = 100;
-        float z = 10;
-        float o = 50;
-
-
-        return ( (r*z/(-z-x)+r ));
-        /*
-
-        double r2 = r*r;
-        double z2 = z*z;
-        double x2 = x*x;
-        return x2*x2 + x2*(2*z*o - r2 + (z-o)*(z-o)) + z2*(o*o-r2);
-        */
-    }
-
-    private double scale(double dist) {
-        if (dist < 90 ) // r - z
-            return fDeform(dist)/dist;
-        else return 1;
-    }
-
     protected void generatePolygons()
     {
         elements = new ArrayList<MyPolygon>();
@@ -160,49 +107,12 @@ public class SoundView extends View {
         invalidate();
     }
 
-    public int getCentreX() {
-        return (int) x;
-    }
-    public int getCentreY() {
-        return (int) y;
-    }
-
-    private final class MyTouchListener implements View.OnTouchListener {
-        public boolean onTouch(View view, MotionEvent motionEvent) {
-            if(motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-                float x = motionEvent.getX();
-                float y = motionEvent.getY();
-                deform(x, y);
-                return true;
-            } if(motionEvent.getAction() == MotionEvent.ACTION_MOVE) {
-                float x = motionEvent.getX();
-                float y = motionEvent.getY();
-                deform(x, y);
-                return true;
-            } else {
-                generatePolygons();
-                invalidate();
-                return false;
-            }
-        }
-    }
-
-    public void setXY(float x, float y) {
-        if (x>0 && x<originalSize[0] && y>0 && y<originalSize[1]) {
-            generatePolygons();
-            deform(x, y);
-        }
-    }
 
     public Point getRandomPolygon() {
         int x = (int) (Math.random() * elements.size());
         return elements.get(x).getPoints()[0];
     }
-    public int getRandomPolygonInt() {
-        int x = (int) (Math.random() * elements.size());
-        return x;
-    }
-    // public Point moveSelection(String direction) {
+
     public Point moveSelection(String direction) {
         if(direction.equals("gauche") && currentRectangle>=nb) {
             currentRectangle -= nb;
@@ -210,7 +120,7 @@ public class SoundView extends View {
             currentRectangle += nb;
         }else if (direction.equals("bas") && currentRectangle<=elements.size()-2) {
             currentRectangle += 1;
-        }else if (direction.equals("haut") && currentRectangle>=1) {
+        }else if ((direction.equals("haut") || direction.equals("Oh") || direction.equals("o")) && currentRectangle>=1) {
             currentRectangle -= 1;
         }
         Log.e("currentRectangle", currentRectangle + " "+ elements.get(currentRectangle).getPoints()[0].x + " "+ elements.get(currentRectangle).getPoints()[0].y);
@@ -242,6 +152,8 @@ public class SoundView extends View {
                 if(p.y >= elements.get(i).getPoints()[0].y && p.y <= elements.get(i).getPoints()[2].y){
                     this.listeCarreVisite.add(i);
                     Log.e("dans y", "dans y");
+                    currentRectangle = i;
+                    invalidate();
                     return elements.get(i).getPoints()[0];
                 }
             }

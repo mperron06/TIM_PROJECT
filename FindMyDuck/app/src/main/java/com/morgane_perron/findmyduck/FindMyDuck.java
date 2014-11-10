@@ -2,9 +2,6 @@ package com.morgane_perron.findmyduck;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.app.Fragment;
-import android.app.FragmentTransaction;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -20,13 +17,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SeekBar;
-import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,8 +29,6 @@ import java.util.List;
 public class FindMyDuck extends Activity implements View.OnClickListener {
     private static final int VOICE_RECOGNITION_REQUEST_CODE = 1234;
     private ImageView imgDuck;
-    //private int xPosition;
-    //private int yPosition;
     private Point positionDuck;
     private Button speakButton;
     private Button hautButton;
@@ -51,9 +44,6 @@ public class FindMyDuck extends Activity implements View.OnClickListener {
     private long startTime;
     private Dialog dialog;
     private File mFile;
-    private String data;
-
-    private ArrayList<DataGamer>dataCollected;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,8 +52,6 @@ public class FindMyDuck extends Activity implements View.OnClickListener {
 
         Log.i(":P", Environment.getExternalStorageDirectory().getPath() + "/Android/data/dataCollected.txt");
         mFile = new File(Environment.getExternalStorageDirectory().getPath() + "/Android/data/dataCollected.txt");
-        dataCollected = new ArrayList<DataGamer>();
-        data = "";
 
         nbCarre = 5;
         dialog = new Dialog(this);
@@ -128,14 +116,15 @@ public class FindMyDuck extends Activity implements View.OnClickListener {
         PackageManager pm = getPackageManager();
         List<ResolveInfo> activities = pm.queryIntentActivities(
                 new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH), 0);
-        /******************************************************************************* VOICE
+        /******************************************************************************* VOICE*/
          if (activities.size() != 0) {
          speakButton.setOnClickListener(this);
          } else {
          // pas de reconnaissance, on désactive le déclencheur
          speakButton.setEnabled(false);
          speakButton.setText("Recognizer not present");
-         } */
+         speakButton.setVisibility(View.GONE);
+         }
 
         soundView = (SoundView) findViewById(R.id.soundView);
         //soundView.setOnClickListener(this);
@@ -285,7 +274,7 @@ public class FindMyDuck extends Activity implements View.OnClickListener {
     }
 
     private void playSound(int resId, float volume) {
-        if (mPlayer != null) {
+        if (mPlayer != null && mPlayer.isPlaying()) {
             mPlayer.stop();
             mPlayer.release();
         }
@@ -317,7 +306,6 @@ public class FindMyDuck extends Activity implements View.OnClickListener {
                 Log.e("Volume", distance + " " + volume1);
                 playSound(R.raw.bip, volume1);
                 if((currentTouch.x == positionDuck.x) && (currentTouch.y == positionDuck.y)) {
-                     //Non testé
                     onWin("Sound");
                 }
                 return true;
@@ -327,13 +315,10 @@ public class FindMyDuck extends Activity implements View.OnClickListener {
     }
 
     private void onWin(String interaction) {
-        long time = (System.currentTimeMillis() - startTime)/1000;
-        Log.e("WIN", time + " second");
-        data+=new DataGamer(interaction, time, nbCarre).toString();
-        writeSettings(data);
-        dataCollected.add(new DataGamer(interaction, time, nbCarre));
+        float t = (float)(System.currentTimeMillis() - startTime)/1000;
+        writeSettings(new DataGamer(interaction, t, nbCarre).toString());
         imgDuck.setVisibility(View.VISIBLE);
-        dialog.setTitle("You win in : " + time + " seconds, try again :");
+        dialog.setTitle("You win in : " + t + " seconds, try again :");
         dialog.show();
     }
 
@@ -346,7 +331,7 @@ public class FindMyDuck extends Activity implements View.OnClickListener {
                 // On crée un nouveau fichier. Si le fichier existe déjà, il ne sera pas créé
                 if(!mFile.exists())
                     mFile.createNewFile();
-                FileOutputStream output = new FileOutputStream(mFile);
+                FileOutputStream output = new FileOutputStream(mFile, true);
                 output.write(data.getBytes());
                 if(output != null)
                     output.close();
