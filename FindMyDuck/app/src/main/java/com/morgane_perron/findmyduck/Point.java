@@ -1,7 +1,7 @@
 package com.morgane_perron.findmyduck;
 
 /**
- * Created by zz on 09/10/14.
+ * Class Point
  */
 public class Point {
     public float x;

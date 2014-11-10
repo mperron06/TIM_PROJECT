@@ -36,20 +36,20 @@ public class FindMyDuck extends Activity implements View.OnClickListener {
     private Button droitButton;
     private Button gaucheButton;
     private SoundView soundView;
-    private int width;
-    private int height;
     private Button goButton;
     private MediaPlayer mPlayer = null;
     private int nbCarre;
     private long startTime;
     private Dialog dialog;
     private File mFile;
-
-    private String data;
     private float varSetX, varSetY;
 
     private ArrayList<DataGamer>dataCollected;
 
+    /**
+     * A la création de l'activité
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         varSetX=1;
@@ -64,7 +64,7 @@ public class FindMyDuck extends Activity implements View.OnClickListener {
         dialog = new Dialog(this);
         dialog.setContentView(R.layout.begin_dialog);
         dialog.setCanceledOnTouchOutside(false);
-        dialog.setTitle("Nb Carrés : " + nbCarre);
+        dialog.setTitle("Nombre de Carrés : " + nbCarre);
 
         goButton = (Button) dialog.findViewById(R.id.goButton);
         goButton.setOnClickListener(new View.OnClickListener() {
@@ -100,15 +100,13 @@ public class FindMyDuck extends Activity implements View.OnClickListener {
 
     }
 
+    /**
+     * Initialisation du jeu
+     */
     private void initiateGame(){
-        //changeMainContent(DuckVoice.newInstance());
-        width = getWindowManager().getDefaultDisplay().getWidth();
-        height = getWindowManager().getDefaultDisplay().getHeight();
-
         imgDuck = (ImageView) findViewById(R.id.imgDuck);
         imgDuck.setVisibility(View.INVISIBLE);
-        //imgDuck.setMinimumHeight(200000);
-        //imgDuck.setVisibility(View.INVISIBLE);
+
         speakButton = (Button) findViewById(R.id.buttonVoice);
         hautButton = (Button) findViewById(R.id.buttonHaut);
         basButton = (Button) findViewById(R.id.buttonBas);
@@ -123,7 +121,7 @@ public class FindMyDuck extends Activity implements View.OnClickListener {
         PackageManager pm = getPackageManager();
         List<ResolveInfo> activities = pm.queryIntentActivities(
                 new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH), 0);
-        /******************************************************************************* VOICE*/
+        // VOICE
          if (activities.size() != 0) {
          speakButton.setOnClickListener(this);
          } else {
@@ -134,7 +132,6 @@ public class FindMyDuck extends Activity implements View.OnClickListener {
          }
 
         soundView = (SoundView) findViewById(R.id.soundView);
-        //soundView.setOnClickListener(this);
         soundView.clear();
         soundView.setNb(nbCarre);
         soundView.generatePolygons();
@@ -162,25 +159,18 @@ public class FindMyDuck extends Activity implements View.OnClickListener {
         return super.onOptionsItemSelected(item);
     }
 
-    /*private void changeMainContent(Fragment fragment) {
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        // Replace whatever is in the fragment_container view with this fragment
-        transaction.replace(R.id.gameContent, fragment);
-
-        // Commit the transaction
-        transaction.commit();
-    }*/
-
-
+    /**
+     * Evénements du click
+     * @param v
+     */
     public void onClick(View v) {
-        Log.e("position duck", positionDuck.x + " " + positionDuck.y);
         if(positionDuck.x==-1 && positionDuck.y==-1) {
             positionDuck = soundView.getRandomPolygon();
             imgDuck.setScaleX((float) (soundView.getWRectangle()/212));
             imgDuck.setScaleY((float) (soundView.getHRectangle()/(237*1.1)));
             getScaleXY();;
-            imgDuck.setX(positionDuck.x-soundView.getWRectangle()*varSetX);//(positionDuck.x/width);
-            imgDuck.setY(positionDuck.y-soundView.getHRectangle()*varSetY);//(positionDuck.y/height);
+            imgDuck.setX(positionDuck.x-soundView.getWRectangle()*varSetX);
+            imgDuck.setY(positionDuck.y-soundView.getHRectangle()*varSetY);
         }
 
         Point result = null;
@@ -205,30 +195,30 @@ public class FindMyDuck extends Activity implements View.OnClickListener {
         }else if(v.getId() == R.id.buttonGauche){
             result = soundView.moveSelection("gauche");
         }
-        else{
-            Log.e("on click", v.getX() + " " + v.getY());
-        }
 
         if (result !=null){
-            Log.e("on click", result.x + " " + result.y);
             if((result.x == positionDuck.x) && (result.y == positionDuck.y)) {
                 onWin("Bouton");
             }
         }
     }
 
+    /**
+     * Analyse de la voix
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent
             data) {
-        Log.e("On ActivityResult", "On ActivityResult");
-        Log.e("position duck", positionDuck.x + " " + positionDuck.y);
         if(positionDuck.x==-1 && positionDuck.y==-1) {
             positionDuck = soundView.getRandomPolygon();
             imgDuck.setScaleX((float) (soundView.getWRectangle()/212));
             imgDuck.setScaleY((float) (soundView.getHRectangle()/(237*1.1)));
             getScaleXY();;
-            imgDuck.setX(positionDuck.x-soundView.getWRectangle()*varSetX);//(positionDuck.x/width);
-            imgDuck.setY(positionDuck.y-soundView.getHRectangle()*varSetY);//(positionDuck.y/height);
+            imgDuck.setX(positionDuck.x-soundView.getWRectangle()*varSetX);
+            imgDuck.setY(positionDuck.y-soundView.getHRectangle()*varSetY);
         }
         // on vérifie que la réponse est bonne et pour nous
         // RESULT_OK est une constante de la classe Activity
@@ -238,11 +228,9 @@ public class FindMyDuck extends Activity implements View.OnClickListener {
             ArrayList<String> matches = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
             if(matches.size()>0) {
                 for (int i = 0; i < matches.size(); i++) {
-                    Log.e("matches", matches.get(i));
                     Point currentPoint = soundView.moveSelection(matches.get(i).toLowerCase());
                     if((currentPoint.x == positionDuck.x) && (currentPoint.y == positionDuck.y)) {
-                        //WIN !!
-                        //Code qui montre le canard
+                        //WIN, Code qui montre le canard
                         onWin("Voice");
                     }
                 }
@@ -251,6 +239,9 @@ public class FindMyDuck extends Activity implements View.OnClickListener {
 
     }
 
+    /**
+     * En Pause
+     */
     @Override
     public void onPause() {
         super.onPause();
@@ -260,6 +251,11 @@ public class FindMyDuck extends Activity implements View.OnClickListener {
         }
     }
 
+    /**
+     * Lancement du Bip de position
+     * @param resId
+     * @param volume
+     */
     private void playSound(int resId, float volume) {
         if (mPlayer != null && mPlayer.isPlaying()) {
             mPlayer.stop();
@@ -269,29 +265,27 @@ public class FindMyDuck extends Activity implements View.OnClickListener {
         mPlayer.setVolume(0, volume);
         mPlayer.start();
     }
-
+    /**
+     * Evénements du Touch
+     */
     private final class MyTouchListener implements View.OnTouchListener {
         public boolean onTouch(View view, MotionEvent motionEvent) {
-            Log.e("position duck", positionDuck.x + " " + positionDuck.y);
             if(positionDuck.x==-1 && positionDuck.y==-1) {
                 positionDuck = soundView.getRandomPolygon();
                 imgDuck.setScaleX((float) (soundView.getWRectangle()/212));
                 imgDuck.setScaleY((float) (soundView.getHRectangle()/(237*1.1)));
                 getScaleXY();;
-                imgDuck.setX(positionDuck.x-soundView.getWRectangle()*varSetX);//(positionDuck.x/width);
-                imgDuck.setY(positionDuck.y-soundView.getHRectangle()*varSetY);//(positionDuck.y/height);
+                imgDuck.setX(positionDuck.x-soundView.getWRectangle()*varSetX);
+                imgDuck.setY(positionDuck.y-soundView.getHRectangle()*varSetY);
             }
             if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
                 float mousePositionX = motionEvent.getX();
                 float mousePositionY = motionEvent.getY();
                 double distance = Math.sqrt(Math.pow(mousePositionX - positionDuck.x, 2) + Math.pow(mousePositionY - positionDuck.y, 2));
-                //using any where`
                 Point currentTouch = soundView.caseContainsPoint(new Point(mousePositionX, mousePositionY));
-                Log.e("current touch", currentTouch.x+ " " + currentTouch.y);
                 float volume1 = (float)(1 - distance/1000);
-                Log.e("Volume", distance + " " + volume1);
                 playSound(R.raw.bip, volume1);
-                if((currentTouch.x == positionDuck.x) && (currentTouch.y == positionDuck.y)) {
+                if((currentTouch.x == positionDuck.x) && (currentTouch.y == positionDuck.y)) { //win
                     onWin("Sound");
                 }
                 return true;
@@ -300,6 +294,11 @@ public class FindMyDuck extends Activity implements View.OnClickListener {
         }
     }
 
+    /**
+     * Lorsque l'image a été trouvé, affichage du canard
+     * et menu de transition
+     * @param interaction
+     */
     private void onWin(String interaction) {
         float t = (float)(System.currentTimeMillis() - startTime)/1000;
         writeSettings(new DataGamer(interaction, t, nbCarre).toString());
@@ -307,7 +306,12 @@ public class FindMyDuck extends Activity implements View.OnClickListener {
         dialog.setTitle("You win in : " + t + " seconds, try again :");
         dialog.show();
     }
-    /* resoudre le positionnement du canard */
+
+    /**
+     * Sauvergarde le temps des joueurs pour les utiliser ultérieurement
+     * pour l'analyse des intéractions dans notre rapport
+     * @param data
+     */
     public void writeSettings(String data){
         try {
 
@@ -322,15 +326,16 @@ public class FindMyDuck extends Activity implements View.OnClickListener {
                 if(output != null)
                     output.close();
             }
-           else{
-                Log.e("NOP", "PROBLEME");
-            }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Positionne comme il faut l'image redimentionnée
+     */
     public void getScaleXY(){
 
         switch (nbCarre){

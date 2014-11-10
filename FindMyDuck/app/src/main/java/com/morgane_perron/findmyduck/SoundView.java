@@ -5,13 +5,12 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
 import java.util.ArrayList;
 
 /**
- * Created by zz on 17/10/14.
+ * Class SoundView
  */
 public class SoundView extends View {
     private ArrayList<MyPolygon> elements;
@@ -30,7 +29,6 @@ public class SoundView extends View {
         this.listeCarreVisite = new ArrayList<Integer>();
         originalSize[0] = 1000;
         originalSize[1] = 2000;
-        //generatePolygons();
 
         currentRectangle = 0;
         this.listeCarreVisite.add(currentRectangle);
@@ -43,13 +41,13 @@ public class SoundView extends View {
         super.onDraw(g);
         for (MyPolygon p : elements) {
             paint.setColor(p.color);
-// liste des points sous la forme d'un tableau (x1, y1, x2, y2, ...)
-// les (xi, yi) sont les sommets
+            // liste des points sous la forme d'un tableau (x1, y1, x2, y2, ...)
+            // les (xi, yi) sont les sommets
             Point[] pts = p.getPoints();
             for (int i = 0; i < pts.length - 1; i++) {
                 g.drawLine(pts[i].x, pts[i].y, pts[i + 1].x, pts[i + 1].y, paint);
             }
-// ligne entre le dernier sommet et le premier somment
+            // ligne entre le dernier sommet et le premier somment
             g.drawLine(pts[pts.length - 1].x, pts[pts.length - 1].y, pts[0].x, pts[0].y, paint);
 
         }
@@ -60,6 +58,10 @@ public class SoundView extends View {
 
     }
 
+    /**
+     * Colorie la liste des carrés visités en noir
+     * @param g
+     */
     private void paintAllRectangleVisited(Canvas g) {
         paint.setColor(Color.BLACK);
         for (int i=0; i<listeCarreVisite.size(); i++) {
@@ -77,7 +79,6 @@ public class SoundView extends View {
         originalSize[1] = getMeasuredHeight();
 
         generatePolygons();
-        //deform(100,100);
 
     }
 
@@ -107,7 +108,11 @@ public class SoundView extends View {
         invalidate();
     }
 
-
+    /**
+     * Retourne un point au hasard du tableau
+     * sauf la case (0,0)
+     * @return Point
+     */
     public Point getRandomPolygon() {
         int x = (int) (Math.random() * elements.size());
         if(elements.get(x).getPoints()[0].x == 0 && elements.get(x).getPoints()[0].y == 0){
@@ -116,7 +121,12 @@ public class SoundView extends View {
         }
         return elements.get(x).getPoints()[0];
     }
-    
+
+    /**
+     * Retourne le point selon la direction choisie
+     * @param direction
+     * @return Point
+     */
     public Point moveSelection(String direction) {
         if(direction.equals("gauche") && currentRectangle>=nb) {
             currentRectangle -= nb;
@@ -127,35 +137,52 @@ public class SoundView extends View {
         }else if ((direction.equals("haut") || direction.equals("Oh") || direction.equals("o")) && currentRectangle>=1) {
             currentRectangle -= 1;
         }
-        Log.e("currentRectangle", currentRectangle + " "+ elements.get(currentRectangle).getPoints()[0].x + " "+ elements.get(currentRectangle).getPoints()[0].y);
         invalidate();
         return elements.get(currentRectangle).getPoints()[0];
     }
 
+    /**
+     * Retourne la largeur d'un case du tableau
+     * @return float
+     */
     public float getWRectangle() {
         return w;
     }
 
+    /**
+     * Retourne la hauteur d'un case du tableau
+     * @return float
+     */
     public float getHRectangle() {
         return h;
     }
 
+    /**
+     * définit le nombre de cases dans le tableau nb x nb
+     * @param nb
+     */
     public void setNb(int nb) {
         this.nb = nb;
     }
 
+    /**
+     * Vide la liste des carrés visités
+     */
     public void clear(){
         this.listeCarreVisite.clear();
         this.currentRectangle = 0;
     }
 
+    /**
+     * Retourne le point en haut à gauche de la case qui contient le point en paramètre
+     * @param p
+     * @return
+     */
     public Point caseContainsPoint(Point p){
         for(int i=0; i<elements.size(); i++) {
             if(p.x >= elements.get(i).getPoints()[0].x && p.x <= elements.get(i).getPoints()[2].x){
-                Log.e("dans x", "dans x");
                 if(p.y >= elements.get(i).getPoints()[0].y && p.y <= elements.get(i).getPoints()[2].y){
                     this.listeCarreVisite.add(i);
-                    Log.e("dans y", "dans y");
                     currentRectangle = i;
                     invalidate();
                     return elements.get(i).getPoints()[0];
