@@ -8,7 +8,8 @@ Titre du projet : Find the duck <br>
 Description : Le but de l’application est de trouver dans une grille l’image cachée du canard. <br>
 Interactions : (3) <br>
 - Naviguer à l’aide de boutons : haut, bas, gauche, droite; dans la grille.<br>
-- A l’aide du touch essayer plusieurs carreaux sur la grille. Un son permet de guider la recherche: plus le son est fort et plus on est proche du canard.
+- A l’aide du touch essayer plusieurs carreaux sur la grille. Un son permet de guider la recherche: plus le son est fort et plus on est proche du canard.<br>
+- Un bouton est disponible pour analyser la voix. L’utilisateur doit indiquer haut, bas, gauche ou droite afin de se déplacer dans la grille pour retrouver l’image.
 
 ##Installation
 
