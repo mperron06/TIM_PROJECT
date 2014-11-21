@@ -21,6 +21,6 @@ Interactions : (3) <br>
 6 - Lancer un Run  <br> <br>
 
 ###Installation direct de l'apk
-1 - Build
-2 - Generate Signed APK
+1 - Build <br>
+2 - Generate Signed APK <br>
 3 - Ouvrir directement via le téléphone le fichier findmyduck.apk<br>
